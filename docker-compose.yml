@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+   todo:
+      image: iamharryb/todo:latest
+      restart: always
+      container_name: todo
+      ports:
+      - 8080:8080
+      depends_on: 
+         - mongo
+   
+   mongo:
+      image: mongo
+      container_name: todo-mongo
+      volumes: 
+         - mongodb
+      restart: always
