@@ -1,30 +1,59 @@
 version: 2
+
 jobs:
-   build:
-      docker:
-         - image: circleci/openjdk:11-jdk-stretch
-      steps:
-         - checkout
+  build:
+    docker:
+      - image: circleci/openjdk:11-jdk-stretch
+    steps:
+      - checkout
 
-         - restore_cache:
-            key: todo-{{ checksum "pom.xml" }}
+      - restore_cache:
+          key: todo-{{ checksum "pom.xml" }}
 
-         - run: mvn dependency:go-offline
+      - run: mvn dependency:go-offline
 
-         - save_cache:
-            paths:
-               - ~/.m2
-            key: todo-{{ checksum "pom.xml" }}
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: todo-{{ checksum "pom.xml" }}
 
-         - run: mvn package
+      - run: mvn package
 
-         - store_test_results:
-            path: target/surefire-reports
+      - store_test_results:
+          path: target/surefire-reports
 
-         - setup_remote_docker
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: .
+          # Must be relative path from root
+          paths:
+            - target
+            - Dockerfile
 
-         - run: |
-            docker image build -t iamharryb/todo:$CIRCLE_SHA1 -t iamharryb/todo:master .
-            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-            docker image push iamharryb/todo:$CIRCLE_SHA1
-            docker image push iamharryb/todo:master
+  tag_n_push:
+    docker:
+      - image: circleci/openjdk:11-jdk-stretch
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: .
+      - setup_remote_docker
+      - run: |
+          docker image build -t iamharryb/todo:$CIRCLE_SHA1 -t iamharryb/todo:master .
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          docker image push iamharryb/todo:$CIRCLE_SHA1
+          docker image push iamharryb/todo:master
+
+workflows:
+  version: 2
+  btd:
+    jobs:
+      - build
+      - tag_n_push:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+
