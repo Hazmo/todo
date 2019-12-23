@@ -20,3 +20,11 @@ jobs:
 
          - store_test_results:
             path: target/surefire-reports
+
+         - setup_remote_docker
+
+         - run: |
+            docker image build -t iamharryb/todo:$CIRCLE_SHA1 -t iamharryb/todo:master .
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            docker image push iamharryb/todo:$CIRCLE_SHA1
+            docker image push iamharryb/todo:master
