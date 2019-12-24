@@ -2,3 +2,6 @@ spring:
     data:
         mongodb:
             uri: mongodb://todo-mongo:27017/todo
+graphql:
+    servlet:
+        exception-handlers-enabled: true
