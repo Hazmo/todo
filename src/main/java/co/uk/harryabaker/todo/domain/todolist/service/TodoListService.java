@@ -3,17 +3,13 @@ package co.uk.harryabaker.todo.domain.todolist.service;
 import co.uk.harryabaker.todo.domain.todolist.model.TodoList;
 import co.uk.harryabaker.todo.domain.todolist.port.TodoListPort;
 import lombok.RequiredArgsConstructor;
-import org.hashids.Hashids;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ThreadLocalRandom;
+import static co.uk.harryabaker.todo.domain.utils.HashIdUtils.getId;
 
 @Service
 @RequiredArgsConstructor
 public class TodoListService {
-
-    private static final long BOUND = 1000000L;
-    private final Hashids hashids;
 
     private final TodoListPort todoListPort;
 
@@ -21,22 +17,28 @@ public class TodoListService {
         return todoListPort.getTodoList(id);
     }
 
-    public TodoList createTodoList() {
-        String encode = hashids.encode(ThreadLocalRandom.current().nextLong(BOUND)).toUpperCase();
-        TodoList todoList = todoListPort.createTodoList(TodoList.builder()
-                .id(encode)
-                .build());
+    public TodoList getTodoListFromTodo(String todoId) {
+        return todoListPort.getTodoListFromTodo(todoId);
+    }
 
-        return todoList;
+    public TodoList createTodoList() {
+
+        return todoListPort.createTodoList(TodoList.builder()
+                .id(getId())
+                .build());
+    }
+
+    public TodoList saveTodoList(TodoList todoList) {
+        return todoListPort.save(todoList);
     }
 
     @Deprecated
     public String createList() {
-        String encode = hashids.encode(ThreadLocalRandom.current().nextLong(BOUND)).toUpperCase();
         TodoList todoList = todoListPort.createTodoList(TodoList.builder()
-                .id(encode)
+                .id(getId())
                 .build());
 
         return todoList.getId();
     }
+
 }

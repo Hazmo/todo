@@ -6,5 +6,9 @@ public interface TodoListPort {
 
    TodoList getTodoList(String id);
 
+   TodoList getTodoListFromTodo(String todoId);
+
    TodoList createTodoList(TodoList todoList);
+
+   TodoList save(TodoList todoList);
 }

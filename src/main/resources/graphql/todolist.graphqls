@@ -1,17 +1,23 @@
 type Query {
     getTodoList(id: ID!): TodoList
+#    filterCompletedTodos(todoListId: ID!): [Todo!]
+#    filterUncompletedTodos(todoListId: ID!) : [Todo!]
 }
 
 type Mutation {
     createTodoList: TodoList
+    createTodo(todoListid: ID!, description: String!): Todo
+    completeTodo(id: ID!): Todo
+    uncompleteTodo(id: ID!): Todo
 }
 
 type TodoList {
     id: ID!
-    todos: [Todo]
+    todos: [Todo!]!
 }
 
 type Todo {
-    description: String
-    complete: Boolean
+    id: ID!
+    description: String!
+    complete: Boolean!
 }
