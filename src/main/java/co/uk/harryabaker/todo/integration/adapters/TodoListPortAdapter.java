@@ -13,7 +13,13 @@ public class TodoListPortAdapter implements TodoListPort {
     private final TodoListRepository todoListRepository;
 
     @Override
-    public TodoList createList(TodoList todoList) {
+    public TodoList getTodoList(String id) {
+        // TODO: 24/12/2019 create a proper runtime exception for this
+        return todoListRepository.findById(id).orElseThrow(() -> new RuntimeException());
+    }
+
+    @Override
+    public TodoList createTodoList(TodoList todoList) {
         return todoListRepository.save(todoList);
     }
 }

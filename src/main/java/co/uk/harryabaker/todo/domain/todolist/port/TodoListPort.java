@@ -4,5 +4,7 @@ import co.uk.harryabaker.todo.domain.todolist.model.TodoList;
 
 public interface TodoListPort {
 
-   TodoList createList(TodoList todoList);
+   TodoList getTodoList(String id);
+
+   TodoList createTodoList(TodoList todoList);
 }

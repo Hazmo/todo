@@ -1,0 +1,17 @@
+type Query {
+    getTodoList(id: ID!): TodoList
+}
+
+type Mutation {
+    createTodoList: TodoList
+}
+
+type TodoList {
+    id: ID!
+    todos: [Todo]
+}
+
+type Todo {
+    description: String
+    complete: Boolean
+}

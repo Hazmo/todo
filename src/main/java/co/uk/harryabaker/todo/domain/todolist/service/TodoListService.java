@@ -17,9 +17,23 @@ public class TodoListService {
 
     private final TodoListPort todoListPort;
 
+    public TodoList getTodoList(String id) {
+        return todoListPort.getTodoList(id);
+    }
+
+    public TodoList createTodoList() {
+        String encode = hashids.encode(ThreadLocalRandom.current().nextLong(BOUND)).toUpperCase();
+        TodoList todoList = todoListPort.createTodoList(TodoList.builder()
+                .id(encode)
+                .build());
+
+        return todoList;
+    }
+
+    @Deprecated
     public String createList() {
         String encode = hashids.encode(ThreadLocalRandom.current().nextLong(BOUND)).toUpperCase();
-        TodoList todoList = todoListPort.createList(TodoList.builder()
+        TodoList todoList = todoListPort.createTodoList(TodoList.builder()
                 .id(encode)
                 .build());
 
