@@ -53,8 +53,8 @@ jobs:
       - helm-deploy/add-helm-repo:
           helm_repo_name: hazmos_repo
       - helm-deploy/configure-kubectl:
-          kube_host: $KUBERNETES_HOST
-          kube_cluster_ca_cert_data: $KUBERNETES_CA_DATA
+          kube_host: KUBERNETES_HOST
+          kube_cluster_ca_cert_data: KUBERNETES_CA_DATA
           kube_bearer_token: KUBERNETES_CLUSTER_TOKEN
       - helm-deploy/deploy:
           helm_release: todo
