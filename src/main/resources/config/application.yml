@@ -2,3 +2,9 @@ spring:
     data:
         mongodb:
             uri: mongodb://localhost/todo
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
