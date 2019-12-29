@@ -1,5 +1,6 @@
-version: 2
-
+version: 2.1
+orbs:
+  helm-deploy: perxtech/helm-deploy@0.0.5
 jobs:
   build:
     docker:
@@ -44,6 +45,21 @@ jobs:
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker image push iamharryb/todo:$CIRCLE_SHA1
           docker image push iamharryb/todo:master
+  deploy:
+    executor: helm-deploy/default
+    steps:
+      - run:
+          command: echo 'export HELM_REPO_URL=https://hazmo.github.io/helm-repo' >> $BASH_ENV
+      - helm-deploy/add-helm-repo:
+          helm_repo_name: hazmos_repo
+      - helm-deploy/configure-kubectl:
+          kube_host: $KUBERNETES_HOST
+          kube_cluster_ca_cert_data: $KUBERNETES_CA_DATA
+          kube_bearer_token: KUBERNETES_CLUSTER_TOKEN
+      - helm-deploy/deploy:
+          helm_release: todo
+          helm_chart: hazmos_repo/todo
+          helm_values: image.tag=$CIRCLE_SHA1,mongodb.username=$MONGODB_USERNAME,mongodb.password=$MONGODB_PASSWORD
 
 workflows:
   version: 2
@@ -56,4 +72,12 @@ workflows:
           filters:
             branches:
               only: master
+      - hold:
+          type: approval
+          requires:
+            - tag_n_push
+      - deploy:
+          requires:
+            - hold
+
 
