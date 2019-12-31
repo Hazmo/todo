@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  helm-deploy: perxtech/helm-deploy@0.0.5
+  helm-deploy: hazmo/helm-deploy@0.0.4
 jobs:
   build:
     docker:
@@ -46,7 +46,9 @@ jobs:
           docker image push iamharryb/todo:$CIRCLE_SHA1
           docker image push iamharryb/todo:master
   deploy:
-    executor: helm-deploy/default
+    executor:
+      name: helm-deploy/default
+      docker_tag: 3.0.2
     steps:
       - run:
           command: echo 'export HELM_REPO_URL=https://hazmo.github.io/helm-repo' >> $BASH_ENV
